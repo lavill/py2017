@@ -1,0 +1,58 @@
+#! python3
+#爬取全本小说网，以九鼎记为例，http://www.quanben.co/files/article/html/0/138/index.html
+import logging,os,codecs,re
+from urllib.request import urlopen
+from bs4 import BeautifulSoup
+
+#基本设置
+logging.basicConfig(level=logging.DEBUG,format='%(asctime)s       %(levelname)s       %(message)s')
+logging.disable(logging.DEBUG)
+os.chdir("C:\\1\\")  #目标文件夹
+logging.debug(os.getcwd())
+
+def urltobs(url):
+    #根据网址返回bs对象
+    tmp = urlopen(url)
+    return BeautifulSoup(tmp,"lxml")
+def transRsettolst(Resultset):
+    #将'bs4.element.ResultSet'类型转换为列表类型。
+    result = []
+    for tmp in Resultset:
+        tmp = tmp.get_text()
+        result.append(tmp.strip()) #去除前后空白字符
+    return result
+
+#解析目录页面
+mubiao = 'http://www.quanben.co/files/article/html/0/138/index.html'
+preaddress = mubiao[:-10]  #各章节均存在此文件夹。
+mulu = urltobs(mubiao)
+logging.debug(mulu)
+name = mulu.h1.get_text()   #bs对象的一级标题h1对应小说名称，取其get_text属性，得到小说名称的字符串。
+name2 = mulu.findAll("div",{"class":"novel_title"})  #各篇名称。findall得到'bs4.element.ResultSet'类型，类似列表。
+name3 = mulu.findAll("li",{"style":"width:24%;"})  #得到各章节名称和链接。
+regchapter = re.compile(r'<a href="(\d{6}.html)">(.*?)</a>')
+chapter = regchapter.findall(str(name3)) #匹配章节地址和名称。
+#for address,chaptername in chapter:
+#    address = preaddress+address
+
+name2 = transRsettolst(name2)
+name3 = transRsettolst(name3)
+
+#文件太多，将各篇分别保存。
+for i in range(3,len(name2)-1):
+    #以name2（篇名）为序，保存文件。tmp1\2分别为前后篇名，tmp3为其间代码，tmp4为tmp1篇各章地址及名称。
+    tmp1 = name2[i]
+    tmp2 = name2[i+1]
+    rege = re.compile("%s(.*)%s"%(tmp1,tmp2),re.S)  #在正则表达式中使用变量。
+    tmp3 = rege.findall(str(mulu))
+    logging.info(tmp3)
+    tmp4 = regchapter.findall(str(tmp3))
+    for address,chaptername in tmp4:
+        address = preaddress+address
+        f = codecs.open(tmp1+".txt","a","utf-8")
+        f.write(chaptername)
+        logging.info(chaptername)
+        tmp5 = str(urltobs(address).get_text())
+        regt = re.compile(r"%s(.*?)%s"%(tmp1,tmp1),re.S)
+        f.write(regt.sub("",tmp5))
+        f.close()
