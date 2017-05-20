@@ -39,11 +39,11 @@ name2 = transRsettolst(name2)
 name3 = transRsettolst(name3)
 
 #文件太多，将各篇分别保存。
-for i in range(3,len(name2)-1):
+for i in range(0,len(name2)-1):
     #以name2（篇名）为序，保存文件。tmp1\2分别为前后篇名，tmp3为其间代码，tmp4为tmp1篇各章地址及名称。
     tmp1 = name2[i]
     tmp2 = name2[i+1]
-    rege = re.compile("%s(.*)%s"%(tmp1,tmp2),re.S)  #在正则表达式中使用变量。
+    rege = re.compile("%s(.*)%s"%(tmp1,tmp1),re.S)  #在正则表达式中使用变量，最后一篇时，去掉后一个%s字符串。
     tmp3 = rege.findall(str(mulu))
     logging.info(tmp3)
     tmp4 = regchapter.findall(str(tmp3))
