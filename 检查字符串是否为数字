@@ -1,0 +1,20 @@
+#检查字符串是否为十进制数字（含小数）。利用字符串特性计算，不需要导入模块。
+
+def strNumberCheck(strChecked):
+    rangeDecimalStr = "0123456789.-"
+    dotTimes = strChecked.count(".")
+
+    #首先排除多个小数点或首位之外有负号的情况。
+    if dotTimes < 2 and strChecked.find("-") < 1:
+        for i in range(len(strChecked)):
+            if strChecked[i] in rangeDecimalStr:
+                continue
+            else:
+                print('输入值%s不是数字。'%strChecked)
+                return False
+        else:
+            print('输入值%s是数字。' % strChecked)
+            return True
+    else:
+        print('输入值%s是数字。' % strChecked)
+        return True
