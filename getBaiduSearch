@@ -1,0 +1,13 @@
+#用get方法构造请求并抓取检索后的网页。
+import urllib.request
+
+#读取
+key = "hello"
+urlObj = "http://www.baidu.com/baidu?word=" + key
+fileObj = urllib.request.urlopen(urlObj)
+content = fileObj.read()
+
+#储存
+file1 = open("E:/1/newbaidu.html","wb")
+file1.write(content)
+file1.close()
