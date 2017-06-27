@@ -4,6 +4,17 @@ import urllib.request
 #读取
 key = "hello"
 urlObj = "http://www.baidu.com/baidu?word=" + key
+
+urllib.request.urlretrieve(urlObj,"e:/1/baiduHello.html")
+urllib.request.urlcleanup()
+
+
+#复杂写法。用get方法构造请求并抓取检索后的网页。
+import urllib.request
+
+#读取
+key = "hello"
+urlObj = "http://www.baidu.com/baidu?word=" + key
 fileObj = urllib.request.urlopen(urlObj)
 content = fileObj.read()
 
