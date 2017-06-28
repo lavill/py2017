@@ -1,0 +1,24 @@
+# 四则混合运算。4个数字加减乘混合运算。
+import random
+
+i = 1
+question = answer = ""
+while i <= 2:
+    a1 = random.randint(1, 100)
+    a2 = random.randint(1, 50)
+    a3 = random.randint(1, 50)
+    a4 = random.randint(1, 100)
+    result = a1 + a2 * a3 - a4
+    tmp = str("%d、%d+%d×%d-%d=" % (i, a1, a2, a3, a4))
+    if result > 0:
+        question = question + tmp + "\n"
+        answer = answer + str(i) + "、" + str(result) + "\n"
+        i += 1
+
+# 保存到文本文件中。
+file = open("C:/Dora/计算题.txt", "w")
+file.write(question)
+file.close()
+file = open("C:/Dora/答案.txt", "w")
+file.write(answer)
+file.close()
