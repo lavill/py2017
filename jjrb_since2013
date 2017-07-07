@@ -1,0 +1,38 @@
+# 下载2013年起的经济日报。地址已知，形如：http://paper.ce.cn/jjrb/page/1/2017-07/04/01/2017070401_pdf.pdf
+import urllib.request
+
+addressPre = "http://paper.ce.cn/jjrb/page/1/"
+dirDf = "E:/1/jjrb/"
+
+
+def getpdf(url_pdf):
+    # urlPDF是文件的完整地址。下面先取得待保存文件名。
+    filename = url_pdf.split("/")[-1][0:10]+".pdf"
+    try:
+        u = urllib.request.urlopen(url_pdf)
+    # 当地址不存在时（各期版面数不同，经常会有8版的。为避免遗漏，循环地址按16版设置）退出本函数。
+    except:
+        print("{}没有第{}版。".format(filename[0:8], filename[8:10]))
+        return "end"
+    f = open(dirDf+filename, "wb")
+
+    while True:
+        # 每次读取8K，以免程序死掉。
+        butter = u.read(8192)
+        if not butter:
+            break
+        f.write(butter)
+    f.close()
+
+# 通过循环取得pdf文件地址。
+for y1 in range(2017, 2018):
+    for m1 in range(6, 7):
+        for d1 in range(1, 32):
+            for b1 in range(1, 17):
+                addressPost = "{0}-{1:02}/{2:02}/{3:02}/{0}{1:02}{2:02}{3:02}_pdf.pdf" .format(y1, m1, d1, b1)
+                address = addressPre + addressPost
+                print(address)
+                # 判断时就会执行getpdf函数，当该函数返回特定值时直接跳出本次for循环，减少判断不存在版面的效率损失。
+                if getpdf(address) == "end":
+                    break
+
