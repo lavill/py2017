@@ -15,7 +15,7 @@ def getpdf(url_pdf):
     # 为一个文件
     except urllib.error.HTTPError:
         print("{}没有第{}版。".format(filename[0:8], filename[8:10]))
-        return 1
+        return 0
     f = open(dirDf+filename, "wb")
 
     while True:
@@ -25,19 +25,20 @@ def getpdf(url_pdf):
             break
         f.write(butter)
     f.close()
-    return 0
+    return 1
 
 # 通过循环取得pdf文件地址。
 for y1 in range(2014, 2015):
-    for m1 in range(1, 13):
+    for m1 in range(3, 4):
         for d1 in range(1, 32):
             # 不存在版面数量为number
-            number = 0
+            numberexist = []
             for b1 in range(1, 17):
                 addressPost = "{0}-{1:02}/{2:02}/{3:02}/{0}{1:02}{2:02}{3:02}_pdf.pdf" .format(y1, m1, d1, b1)
                 address = addressPre + addressPost
                 print(address)
-                # 判断时就会执行getpdf函数，1天内有2个页面不存在时跳出本次for循环，减少判断不存在版面的效率损失。
-                number += getpdf(address)
-                if number == 2:
-                    break
+                # 判断时就会执行getpdf函数，1天内有连续2个页面不存在时跳出本次for循环，减少判断不存在版面的效率损失。
+                numberexist.append(getpdf(address))
+                if b1 > 1:
+                    if numberexist[b1-2] == 0 and numberexist[b1-1] == 0:
+                        break
