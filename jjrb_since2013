@@ -1,6 +1,7 @@
 # 下载2013年起的经济日报。地址已知，形如：http://paper.ce.cn/jjrb/page/1/2017-07/04/01/2017070401_pdf.pdf
 import urllib.request
 import urllib.error
+import os
 
 addressPre = "http://paper.ce.cn/jjrb/page/1/"
 dirDf = "E:/1/jjrb/"
@@ -16,7 +17,7 @@ def getpdf(url_pdf):
     except urllib.error.HTTPError:
         print("{}没有第{}版。".format(filename[0:8], filename[8:10]))
         return 0
-    f = open(dirDf+filename, "wb")
+    f = open(getdir(filename[0:6]) + filename, "wb")
 
     while True:
         # 每次读取8K，以免程序死掉。
@@ -27,9 +28,20 @@ def getpdf(url_pdf):
     f.close()
     return 1
 
-# 通过循环取得pdf文件地址。
-for y1 in range(2014, 2015):
-    for m1 in range(3, 4):
+
+def getdir(subdir):
+    # 输入需要的子文件夹名称，（结合默认父文件夹）返回完整文件夹名称。
+    entiredir = dirDf + subdir + "/"
+    try:
+        os.makedirs(entiredir)
+    except FileExistsError:
+        pass
+    os.chdir(entiredir)
+    return entiredir
+
+# 程序主体，通过循环取得pdf文件地址。然后调用getpdf函数保存到指定文件夹。
+for y1 in range(2013, 2018):
+    for m1 in range(1, 13):
         for d1 in range(1, 32):
             # 不存在版面数量为number
             numberexist = []
