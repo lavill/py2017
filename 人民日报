@@ -5,7 +5,7 @@ import os
 
 # 设置服务器默认爬取路径和本地储存路径。
 addressPre = "http://paper.people.com.cn/rmrb/page/"
-dirDf = "E:/1/人民日报/"
+dirDf = "E:/资料/人民日报/"
 
 
 def getpdf(url_pdf):
@@ -22,16 +22,9 @@ def getpdf(url_pdf):
                 break
             f.write(butter)
         f.close()
-
-        while True:
-            # 每次读取8K，以免程序死掉。
-            butter = u.read(8192)
-            if not butter:
-                break
-            f.write(butter)
-        f.close()
+        # 正常执行后返回1.（下面，非报错即正常执行时返回0）
         return 1
-    # 当地址不存在时（各期版面数不同，经常会有8版的。为避免遗漏，循环地址按16版设置）退出本函数。有时有连版，如10-11版
+    # 当地址不存在时（各期版面数不同，经常会有8或16版。为免遗漏，循环地址按16版设置）退出本函数。有时有连版，如10-11版
     # 为一个文件
 
     except urllib.error.HTTPError as herr:
@@ -61,15 +54,15 @@ def getdir(subdir):
 
 # 程序主体，通过循环取得pdf文件地址。然后调用getpdf函数保存到指定文件夹。
 for y1 in range(2017, 2018):
-    for m1 in range(7, 8):
-        for d1 in range(13, 14):
-            # 不存在版面数量为number。2017-07/12/01/rmrb2017071201.pdf
+    for m1 in range(1, 8):
+        for d1 in range(1, 32):
+            # 不存在版面数量为number。
             numberexist = []
             for b1 in range(25, 26):
                 addressPost = "{0}-{1:02}/{2:02}/{3:02}/rmrb{0}{1:02}{2:02}{3:02}.pdf" .format(y1, m1, d1, b1)
                 address = addressPre + addressPost
                 print(address)
-                # 判断时就会执行getpdf函数，1天内有连续2个页面不存在时跳出本次for循环，减少判断不存在版面的效率损失。
+                # 判断时就会执行getpdf函数，1天内有连续2个页面文件不存在时跳出本次for循环，减少判断不存在版面的效率损失。
                 numberexist.append(getpdf(address))
                 if b1 > 1:
                     if numberexist[b1-2] == 0 and numberexist[b1-1] == 0:
